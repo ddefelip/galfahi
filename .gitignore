@@ -1,6 +1,6 @@
 # Files to ignore
 *.pyc
 *~
-Misc
-LeoT_Subcube
-NGC2903_Subcube
+Misc/
+NGC2903*
+LeoT_*png
