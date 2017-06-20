@@ -1,6 +1,7 @@
 # Files to ignore
 *.pyc
 *~
+DR2W/
 Misc/
 NGC2903*
 LeoT_*png

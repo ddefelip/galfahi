@@ -33,3 +33,12 @@ def umask(data, radius, smr_mask=None):
     #    return bindata
     #else:
     #    return np.logical_and(smr_mask, bindata
+
+
+def umask_cubes(cubenames):
+    for cubename in cubenames:
+        cube = fits.open('DR2W/GALFA_HI_RA+DEC_'+cubename+'.fits')
+        for i in range(cube[0].data.shape[0]):                 
+            cube[0].data[i] = umask(cube[0].data[i],30)
+        cube.writeto('DR2W/GALFA_HI_RA+DEC_'+cubename+'_UnsharpMask_r=30.fits')
+        print(cubename,'done.')

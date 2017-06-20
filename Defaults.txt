@@ -1,0 +1,52 @@
+#### Default Settings ####
+# Input #
+Input Data Products TRUE: Data cube='UnsharpMask_r=30', Mask cube='', Weights cube='', Weights function=''
+Subcube FALSE:
+Flagging FALSE:
+Catalog-based Source Finding FALSE:
+
+# Input Filter #
+Smoothing TRUE: Kernel=Gaussian, Edge=Constant, Scale=(3,3,3) 
+Noise Scaling TRUE: Dimensions=Z, Statistic=Standard deviation, Edge=(0,0,0)
+2D-1D Wavelet Filter FALSE
+
+# Source Finding #
+Smooth + Clip Finder TRUE: Threshold=5, Edge mode=Constant, RMS mode=Standard Deviation, Kernel units=Pixels, Kernels=[[ 3, 3, 3,'g'],[ 3, 3, 7,'g'],[ 3, 3, 10,'g']]
+CNHI Finder FALSE:
+Threshold Finder FALSE:
+
+# Merging #
+Merging TRUE: Radius=(1,1,1), Min. size=(5,5,5)
+
+# Parameterization #
+Source Parameterization TRUE: Optimize mask dialation=FALSE, Optimize mask ellipse=FALSE, Fit Busy Function=FALSE
+Reliability Calculation FALSE:
+
+# Output Filter #
+Output Parameter Filtering FALSE:
+
+# Output #
+Output Data Products TRUE: Base name='', Output Directory='UnsharpMask_r=30', ASCII=TRUE, VO table=TRUE, SQL=FALSE, Filtered cube=FALSE, Mask=TRUE, Mom. 0=TRUE, Mom. 1=TRUE, Source products=TRUE, Compression=FALSE, Overwrite files=TRUE
+Output Parameters FALSE:
+##########################
+
+
+#### Folders ####
+A: Default settings
+B: Merging: Radius=(3,3,3)
+C: Merging: Radius=(5,5,5)
+D: Smoothing FALSE:
+E: Smoothing: Scale=(5,5,5)
+F: Smooth + Clip Finder: Kernels=[[ 3, 3, 3,'b'],[ 3, 3, 7,'b'],[ 3, 3, 10,'b']]
+G: Noise Scaling TRUE: Dimensions=XYZ, Statistic=Standard deviation, Edge=(0,0,0)
+H: Noise Scaling FALSE:
+I: Subcube TRUE: Range=[0,512,0,512,140,1907], Mode=Pixels #[-650 km/s, 650 km/s]
+J: E and I #looks most promising
+K: E and I and Smooth + Clip Finder: Kernels=[[1,1,1,'g']]
+L: I and Smooth + Clip Finder: Kernels=[[1,1,1,'g']]
+M: I and Smooth + Clip Finder: Kernels=[[1,1,1,'g'],[ 3, 3, 3,'g'],[ 3, 3, 7,'g'],[ 3, 3, 10,'g']]
+N: M and Merging: Radius=(5,5,5)
+O: E and I and Smooth + Clip Finder: Kernels=[[1,1,1,'g'],[ 3, 3, 3,'g'],[ 3, 3, 7,'g'],[ 3, 3, 10,'g']]
+P: D and I and Smooth + Clip Finder: Kernels=[[1,1,1,'g'],[ 3, 3, 3,'g'],[ 3, 3, 7,'g'],[ 3, 3, 10,'g']]
+Q: D and I
+R: D and I and Smooth + Clip Finder: Kernels=[[4, 4, 5,'g'],[4, 4, 10,'g'],[4, 4, 20,'g'],[4, 4, 30,'g']]
