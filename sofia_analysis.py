@@ -707,5 +707,5 @@ def select_objects(criteria=[]):
     
     #headerlist =  
 
-    np.savetxt('LeoT_like_sources.csv',sources,delimiter=',',header=','.join(headerlist))
+    np.savetxt('LeoT_like_sources_'+str(len(cubes))+'cubes.csv',sources,delimiter=',',header=','.join(headerlist))
     return
