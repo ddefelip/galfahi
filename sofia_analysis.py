@@ -664,7 +664,7 @@ def make_correlation_plot(x,y,z='',logx=False,logy=False,logz=False):
     ##pl.axvline(x=8,ymin=10/35.,color='black')
     ##pl.axhline(y=10,xmin=3.5/13,xmax=7./13,color='black')
 
-    pl.savefig('plots/'+plotname+'.pdf')
+    pl.savefig('plots/correlations/'+plotname+'.pdf')
     return
 
 
