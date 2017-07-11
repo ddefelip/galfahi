@@ -73,10 +73,14 @@ def channels_to_velwidth(channel_array):
     return (channel_array-1) * 736.122839600 / 1000 # in km/s
 
 
-def make_object_plot(ra, dec, i):
+def make_object_plot(ra, dec, i, overwrite=False):
     cubename = 'GALFA_HI_RA+DEC_'+str(ra).zfill(3)+'.00+'+str(dec).zfill(5)+'_W_UnsharpMask_r=30'
     path = 'DR2W/'+str(ra).zfill(3)+'.00+'+str(dec).zfill(5)+'_W/UnsharpMask_r=30/R/objects/'
 
+    plotpath, dirs, files = os.walk('plots/objects').next()
+    if cubename+'_%i.pdf' % i in files and not overwrite:
+        return
+        
     objectfits = fits.open(path+cubename+'_%i.fits' % i)
     mom0 = fits.open(path+cubename+'_%i_mom0.fits' % i)
     index, velocity, spectrum = np.loadtxt(path+cubename+'_%i_spec.txt' % i,unpack=True)
@@ -136,7 +140,7 @@ def make_object_plot(ra, dec, i):
     mom0.close()
     return
 
-def make_object_plots(sourcetablename):
+def make_object_plots(sourcetablename,overwrite=False):
     delimiter = None
     if sourcetablename[-3:] == 'csv':
         delimiter = ','
@@ -144,8 +148,9 @@ def make_object_plots(sourcetablename):
     ras = (sources[:,0] // 10**4).astype(int)
     decs = sources[:,0] % 10**4 // 1 / 100
     ids = (sources[:,0] * 10**3 % 10**3).astype(int)
+    print('overwrite =',overwrite)
     for j in range(ids.size):
-        make_object_plot(ras[j],decs[j],ids[j])
+        make_object_plot(ras[j],decs[j],ids[j],overwrite=overwrite)
     return
 
 
