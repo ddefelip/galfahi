@@ -27,8 +27,14 @@ cubes = ['004.00+02.35_W','004.00+10.35_W',                                  '00
                                            '124.00+18.35_W','124.00+26.35_W','124.00+34.35_W',
 
          '140.00+02.35_W','140.00+10.35_W','140.00+18.35_W','140.00+26.35_W','140.00+34.35_W',
-
+         '148.00+02.35_W','148.00+10.35_W','148.00+18.35_W','148.00+26.35_W','148.00+34.35_W',
          '156.00+02.35_W','156.00+10.35_W','156.00+18.35_W','156.00+26.35_W','156.00+34.35_W',
+
+                                                                             '180.00+34.35_W',
+
+                          '196.00+10.35_W','196.00+18.35_W',
+
+         '212.00+02.35_W',                                  '212.00+26.35_W','212.00+34.35_W',
 
                                            '236.00+18.35_W','236.00+26.35_W','236.00+34.35_W',
         
@@ -36,8 +42,8 @@ cubes = ['004.00+02.35_W','004.00+10.35_W',                                  '00
        
          '332.00+02.35_W','332.00+10.35_W','332.00+18.35_W','332.00+26.35_W','332.00+34.35_W',
          '340.00+02.35_W',                                                   '340.00+34.35_W',
-         '348.00+02.35_W',                                                   '348.00+34.35_W',
-         '356.00+02.35_W',                                                   '356.00+34.35_W']
+         '348.00+02.35_W',                 '332.00+18.35_W',                 '348.00+34.35_W',
+         '356.00+02.35_W',                 '332.00+18.35_W',                 '356.00+34.35_W']
 
 params = ['id','id_old','x_geo','y_geo','z_geo','x','y','z',
 	  'x_min','x_max','y_min','y_max','z_min','z_max',
@@ -86,7 +92,6 @@ def make_object_plot(ra, dec, i, overwrite=False):
     index, velocity, spectrum = np.loadtxt(path+cubename+'_%i_spec.txt' % i,unpack=True)
     sourcetable = np.loadtxt(path[:-8]+cubename+'_cat.ascii',usecols=range(35))
 
-    #return objectfits
     wcs = WCS(objectfits[0].header).celestial
 
     pl.clf()
@@ -169,12 +174,6 @@ def find_good_objects(ra, dec, overwrite=False, makeobjectplots=False):
     #path = path[2:]
     print(file_count)
     print(path)
-
-    #galacticpeaks = np.array([[-18,8], [-23,6], [-40, 11], [-55, 15], [-41, 31], [-43, 13], [-31,8], [-72, 116]])
-    #for i in range(len(cubes)):
-    #    if path[:14] == cubes[i]:
-    #        galacticpeak = galacticpeaks[i]
-    #        break
 
     galacticpeak = set_galactic_peak(ra, dec)
     print(galacticpeak)
@@ -644,10 +643,10 @@ def make_correlation_plot(x,y,z='',logx=False,logy=False,logz=False):
     plotname = params[yparam]+'_vs_'+params[xparam]
     #plotname = 'lat_vs_long'
     if z != '':
-        pl.scatter(np.array(xvalues[~leotvalues]),np.array(yvalues[~leotvalues]),c=zvalues[~leotvalues],marker='.',
-                   vmin=zvalues.min(),vmax=zvalues.max(),norm=norm,cmap=cmap)
-        pl.scatter(np.array(xvalues[leotvalues]),np.array(yvalues[leotvalues]),c=zvalues[leotvalues],marker='*',s=100,linewidth='1',edgecolor='black',
-                   vmin=zvalues.min(),vmax=zvalues.max(),norm=norm,cmap=cmap)
+        pl.scatter(np.array(xvalues[~leotvalues]),np.array(yvalues[~leotvalues]),c=zvalues[~leotvalues],marker='.',s=20,
+                   vmin=zvalues.min(),vmax=np.sort(zvalues)[-2],norm=norm,cmap=cmap)
+        pl.scatter(np.array(xvalues[leotvalues]),np.array(yvalues[leotvalues]),c=zvalues[leotvalues],marker='*',s=50,linewidth='1',edgecolor='black',
+                   vmin=zvalues.min(),vmax=np.sort(zvalues)[-2],norm=norm,cmap=cmap)
         cbar = pl.colorbar(format='%.1i')
     	cbar.set_label(params[zparam]+plotunits[zparam],rotation=90)
         plotname += '_z='+params[zparam]
@@ -663,11 +662,11 @@ def make_correlation_plot(x,y,z='',logx=False,logy=False,logz=False):
     #pl.xlabel('galactic longitude'+plotunits[xparam])
     #pl.ylabel('galactic lattitude'+plotunits[yparam])
 
-    ##pl.xlim(1,14)
-    ##pl.ylim(0,35)
-    ##pl.axvline(x=4.5,ymin=10/35.,color='black')#ymin=10,linewidth=2,color='k')
-    ##pl.axvline(x=8,ymin=10/35.,color='black')
-    ##pl.axhline(y=10,xmin=3.5/13,xmax=7./13,color='black')
+    #pl.xlim(1,14)
+    #pl.ylim(0,50)
+    #pl.axvline(x=4,ymin=10/50.,color='black',linestyle='dashed',linewidth=1)#ymin=10,linewidth=2,color='k')
+    #pl.axvline(x=8,ymin=10/50.,color='black',linestyle='dashed',linewidth=1)
+    #pl.axhline(y=10,xmin=3/13,xmax=7/13,color='black',linestyle='dashed',linewidth=1)
 
     pl.savefig('plots/correlations/'+plotname+'.pdf')
     return
@@ -677,8 +676,6 @@ def select_objects(criteria=[]):
     if len(criteria) == 0:
         return
     # criteria should be in format of [[parameter index, min, max],[parameter index, min, max],...]
-    #sourcetables = len(cubes)*[[]]
-    #goodobjects = len(cubes)*[[]]
     sources = np.zeros((1,35))
     names = np.array([])
     for i in range(len(cubes)):
@@ -709,8 +706,6 @@ def select_objects(criteria=[]):
     headerlist = []
     for i in range(len(params)):
         headerlist.append(params[i]+sourceunits[i])
-    
-    #headerlist =  
 
     np.savetxt('LeoT_like_sources_'+str(len(cubes))+'cubes.csv',sources,delimiter=',',header=','.join(headerlist))
     return
