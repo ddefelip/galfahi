@@ -1,7 +1,9 @@
-from __future__ import division
+from __future__ import division, print_function, absolute_import
 import numpy as np
 import scipy.ndimage
+import os
 from astropy.io import fits 
+from sofia_analysis import cubes
 
 ### taken/adapted from Susan's code at 
 ### github.com/seclark/RHT/blob/master/rht.py
@@ -35,8 +37,13 @@ def umask(data, radius, smr_mask=None):
     #    return np.logical_and(smr_mask, bindata
 
 
-def umask_cubes(cubenames):
-    for cubename in cubenames:
+def umask_cubes():
+    path, dirs, files = os.walk('DR2W/').next()
+    for cubename in cubes:
+        if 'GALFA_HI_RA+DEC_'+cubename+'_UnsharpMask_r=30.fits' in files:
+            print(cubename,'already done!')
+            continue
+        print(cubename,'starting...')
         cube = fits.open('DR2W/GALFA_HI_RA+DEC_'+cubename+'.fits')
         for i in range(cube[0].data.shape[0]):                 
             cube[0].data[i] = umask(cube[0].data[i],30)
