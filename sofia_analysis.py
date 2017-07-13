@@ -8,6 +8,7 @@ import astropy.io.fits as fits
 from astropy.wcs import WCS
 from astropy import units as u
 from astropy.coordinates import SkyCoord
+from astropy.table import Table
 
 
 cubes = ['004.00+02.35_W','004.00+10.35_W',                                  '004.00+34.35_W',
@@ -155,10 +156,14 @@ def make_object_plots(sourcetablename,overwrite=False):
     delimiter = None
     if sourcetablename[-3:] == 'csv':
         delimiter = ','
-    sources = np.loadtxt(sourcetablename,usecols=range(35),delimiter=delimiter)
-    ras = (sources[:,0] // 10**4).astype(int)
-    decs = sources[:,0] % 10**4 // 1 / 100
-    ids = (sources[:,0] * 10**3 % 10**3).astype(int)
+    sources = Table.read(sourcetablename)
+    #sources = np.loadtxt(sourcetablename,usecols=range(35),delimiter=delimiter)
+    ras = (sources['id'] // 10**4).astype(int)
+    decs = sources['id'] % 10**4 // 1 / 100
+    ids = (sources['id'] * 10**3 % 10**3).astype(int)
+    #ras = (sources[:,0] // 10**4).astype(int)
+    #decs = sources[:,0] % 10**4 // 1 / 100
+    #ids = (sources[:,0] * 10**3 % 10**3).astype(int)
     print('overwrite =',overwrite)
     for j in range(ids.size):
         make_object_plot(ras[j],decs[j],ids[j],overwrite=overwrite)
@@ -713,5 +718,8 @@ def select_objects(criteria=[]):
     for i in range(len(params)):
         headerlist.append(params[i]+sourceunits[i])
 
-    np.savetxt('LeoT_like_sources_'+str(len(cubes))+'cubes.csv',sources,delimiter=',',header=','.join(headerlist))
+    tab = Table(sources,names=headerlist)
+    tab.write('LeoT_like_sources_'+str(len(cubes))+'cubes.csv',format='csv')
+
+    #np.savetxt('LeoT_like_sources_'+str(len(cubes))+'cubes.csv',sources,delimiter=',',header=','.join(headerlist))
     return
