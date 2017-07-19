@@ -654,10 +654,10 @@ def make_correlation_plot(x,y,z='',logx=False,logy=False,logz=False):
     plotname = params[yparam]+'_vs_'+params[xparam]
     #plotname = 'lat_vs_long'
     if z != '':
-        pl.scatter(np.array(xvalues[~leotvalues]),np.array(yvalues[~leotvalues]),c=zvalues[~leotvalues],marker='.',s=20,
-                   vmin=zvalues.min(),vmax=np.sort(zvalues)[-2],norm=norm,cmap=cmap)
+        pl.scatter(np.array(xvalues[~leotvalues]),np.array(yvalues[~leotvalues]),c=zvalues[~leotvalues],marker='.',s=10,
+                   vmin=zvalues.min(),vmax=350,norm=norm,cmap=cmap)
         pl.scatter(np.array(xvalues[leotvalues]),np.array(yvalues[leotvalues]),c=zvalues[leotvalues],marker='*',s=50,linewidth='1',edgecolor='black',
-                   vmin=zvalues.min(),vmax=np.sort(zvalues)[-2],norm=norm,cmap=cmap)
+                   vmin=zvalues.min(),vmax=350,norm=norm,cmap=cmap)
         cbar = pl.colorbar(format='%.1i')
     	cbar.set_label(params[zparam]+plotunits[zparam],rotation=90)
         plotname += '_z='+params[zparam]
