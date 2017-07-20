@@ -145,7 +145,8 @@ def make_object_plot(ra, dec, i, overwrite=False):
 
     ax3.text(0,0.5,'SNR = %f' % sourcetable[i-1,28])
     #pl.tight_layout(pad=0.5)
-    plotfile = 'plots/objects/'+cubename+'_%i.pdf' % i
+#    plotfile = 'plots/objects/'+cubename+'_%i.pdf' % i
+    plotfile = cubename+'_%i.pdf' % i
     pl.savefig(plotfile)
 
     objectfits.close()
@@ -599,7 +600,7 @@ def make_correlation_plot(x,y,z='',logx=False,logy=False,logz=False):
     yparam = params.index(y)
     xvalues = np.array([])
     yvalues = np.array([])
-    leotvalues = np.array([])
+    dwarfvalues = np.array([])
     if z != '':
 	zparam = params.index(z)
         zvalues = np.array([])
@@ -629,9 +630,19 @@ def make_correlation_plot(x,y,z='',logx=False,logy=False,logz=False):
     pl.clf()
     for i in range(len(cubes)): 
         if cubes[i] == '140.00+18.35_W':
-            leot = (goodobjects[i] == leotlocation)
+            dwarf = (goodobjects[i] == leotlocation)
+        elif cubes[i] == '148.00+02.35_W':
+            dwarf = (goodobjects[i] == 162)
+        elif cubes[i] == '180.00+34.35_W':
+            dwarf = (goodobjects[i] == 138)
+        elif cubes[i] == '196.00+10.35_W':
+            dwarf = (goodobjects[i] == 151)
+        elif cubes[i] == '212.00+26.35_W':
+            dwarf = (goodobjects[i] == 64)
+        elif cubes[i] == '356.00+18.35_W':
+            dwarf = (goodobjects[i] == 13)
         else:
-            leot = (goodobjects[i] != goodobjects[i])
+            dwarf = (goodobjects[i] != goodobjects[i])
 
         xs = sourcetables[i][goodobjects[i],xparam]
         ys = sourcetables[i][goodobjects[i],yparam]
@@ -640,24 +651,23 @@ def make_correlation_plot(x,y,z='',logx=False,logy=False,logz=False):
         #xs, ys = coords.galactic.l, coords.galactic.b
         #######################################
         if z != '':
-            leotvalues = np.concatenate((leotvalues, leot))
+            dwarfvalues = np.concatenate((dwarfvalues, dwarf))
             xvalues = np.concatenate((xvalues,xs))
             yvalues = np.concatenate((yvalues,ys))
             zvalues = np.concatenate((zvalues,sourcetables[i][goodobjects[i],zparam]))
         else:
             color = colors[i]
-            pl.scatter(xs[leot],ys[leot],marker='*',s=100,color=color,linewidth='1',edgecolor='black')
-            pl.scatter(xs[~leot],ys[~leot],marker='.',label=cubes[i],color=color)
+            pl.scatter(xs[dwarf],ys[dwarf],marker='*',s=100,color=color,linewidth='1',edgecolor='black')
+            pl.scatter(xs[~dwarf],ys[~dwarf],marker='.',label=cubes[i],color=color)
         
-    leotvalues = leotvalues.astype(bool)
-            
+    dwarfvalues = dwarfvalues.astype(bool)
     plotname = params[yparam]+'_vs_'+params[xparam]
     #plotname = 'lat_vs_long'
     if z != '':
-        pl.scatter(np.array(xvalues[~leotvalues]),np.array(yvalues[~leotvalues]),c=zvalues[~leotvalues],marker='.',s=10,
-                   vmin=zvalues.min(),vmax=350,norm=norm,cmap=cmap)
-        pl.scatter(np.array(xvalues[leotvalues]),np.array(yvalues[leotvalues]),c=zvalues[leotvalues],marker='*',s=50,linewidth='1',edgecolor='black',
-                   vmin=zvalues.min(),vmax=350,norm=norm,cmap=cmap)
+        pl.scatter(np.array(xvalues[~dwarfvalues]),np.array(yvalues[~dwarfvalues]),c=zvalues[~dwarfvalues],marker='.',s=10,
+                   vmin=zvalues.min(),vmax=zvalues.max(),norm=norm,cmap=cmap)
+        pl.scatter(np.array(xvalues[dwarfvalues]),np.array(yvalues[dwarfvalues]),c=zvalues[dwarfvalues],marker='*',s=50,linewidth='1',edgecolor='black',
+                   vmin=zvalues.min(),vmax=zvalues.max(),norm=norm,cmap=cmap)
         cbar = pl.colorbar(format='%.1i')
     	cbar.set_label(params[zparam]+plotunits[zparam],rotation=90)
         plotname += '_z='+params[zparam]
