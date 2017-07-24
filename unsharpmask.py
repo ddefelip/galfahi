@@ -38,7 +38,7 @@ def umask(data, radius, smr_mask=None):
 
 
 def umask_cubes():
-    path, dirs, files = os.walk('DR2W/').next()
+    path, dirs, files = os.walk('DR2W/processed/').next()
     for cubename in cubes:
         if 'GALFA_HI_RA+DEC_'+cubename+'_UnsharpMask_r=30.fits' in files:
             print(cubename,'already done!')
@@ -47,5 +47,5 @@ def umask_cubes():
         cube = fits.open('DR2W/GALFA_HI_RA+DEC_'+cubename+'.fits')
         for i in range(cube[0].data.shape[0]):                 
             cube[0].data[i] = umask(cube[0].data[i],30)
-        cube.writeto('DR2W/GALFA_HI_RA+DEC_'+cubename+'_UnsharpMask_r=30.fits')
+        cube.writeto('DR2W/processed/GALFA_HI_RA+DEC_'+cubename+'_UnsharpMask_r=30.fits')
         print(cubename,'done.')

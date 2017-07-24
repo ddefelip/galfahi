@@ -73,7 +73,7 @@ plotunits = ['','',' [pixels]',' [pixels]',' [pixels]',' [pixels]',' [pixels]','
 
 def set_galactic_peak(ra, dec):
     cubename = 'GALFA_HI_RA+DEC_'+str(ra).zfill(3)+'.00+'+str(dec).zfill(5)+'_W.fits'
-    cube = fits.open('DR2W/'+cubename)
+    cube = fits.open('DR2W/original/'+cubename)
     mean_T = np.zeros(cube[0].header['NAXIS3'])
     for i in range(mean_T.size):
         mean_T[i] = np.nanmean(cube[0].data[i])
@@ -187,7 +187,8 @@ def find_good_objects(ra, dec, overwrite=False, makeobjectplots=False):
     print(galacticpeak)
 
     sourcetable = np.loadtxt(path[:-8]+'GALFA_HI_RA+DEC_'+path[5:19]+'_'+path[20:36]+'_cat.ascii',usecols=range(35))
-    nchan = (sourcetable[:,15] < 70) # set max number of channels
+#    nchan = (sourcetable[:,15] < 70) # set max number of channels
+    w50 = (channels_to_velwidth(sourcetable[:,30]) < 50) # set max w50 = 50 km/s
     ellmaj = (sourcetable[:,20] < 10) # set max size in spatial dimension (fitted ellipse)
     axisrat = (sourcetable[:,20]/sourcetable[:,21] < 3) # set maximum ellipticity
     snr = (sourcetable[:,28] > 6) # set minimum integrated SNR 
@@ -278,8 +279,10 @@ def find_good_objects(ra, dec, overwrite=False, makeobjectplots=False):
 
         exclude = ''
         suffix = ''
-        if not nchan[i-1]:
-            exclude += 'n_chan,\n'
+#        if not nchan[i-1]:
+#            exclude += 'n_chan,\n'
+        if not w50[i-1]:
+            exclude += 'w50,\n'
         if not ellmaj[i-1]:
             exclude += 'ell_maj,\n'
         if not axisrat[i-1]:
@@ -684,6 +687,7 @@ def make_correlation_plot(x,y,z='',logx=False,logy=False,logz=False):
     pl.axvline(x=4,ymin=10/50.,color='black',linestyle='dashed',linewidth=1)#ymin=10,linewidth=2,color='k')
     pl.axvline(x=8,ymin=10/50.,color='black',linestyle='dashed',linewidth=1)
     pl.axhline(y=10,xmin=3/13,xmax=7/13,color='black',linestyle='dashed',linewidth=1)
+    pl.axhline(y=50,xmin=3/13,xmax=7/13,color='black',linestyle='dashed',linewidth=1)
 
     pl.savefig('plots/correlations/'+plotname+'.pdf')
     return
