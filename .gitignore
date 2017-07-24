@@ -2,8 +2,10 @@
 *.pyc
 *~
 DR2W/
-plots/objects/
+plots/HI/
+plots/CMDs/
+plots/NGC2903*
+plots/LeoT_*png
+plots/w50*
 Misc/
-NGC2903*
-LeoT_*png
 .ipynb_checkpoints/
