@@ -86,11 +86,11 @@ def channels_to_velwidth(channel_array):
     return (channel_array-1) * 736.122839600 / 1000 # in km/s
 
 
-def make_object_plot(ra, dec, i, overwrite=False):
+def make_object_plot(ra, dec, i, plotpath, overwrite=False):
     cubename = 'GALFA_HI_RA+DEC_'+str(ra).zfill(3)+'.00+'+str(dec).zfill(5)+'_W_UnsharpMask_r=30'
     path = 'DR2W/'+str(ra).zfill(3)+'.00+'+str(dec).zfill(5)+'_W/UnsharpMask_r=30/R/objects/'
 
-    plotpath, dirs, files = os.walk('plots/objects').next()
+    plotpath, dirs, files = os.walk(plotpath).next()
     if cubename+'_%i.pdf' % i in files and not overwrite:
         return
         
@@ -145,29 +145,25 @@ def make_object_plot(ra, dec, i, overwrite=False):
 
     ax3.text(0,0.5,'SNR = %f' % sourcetable[i-1,28])
     #pl.tight_layout(pad=0.5)
-#    plotfile = 'plots/objects/'+cubename+'_%i.pdf' % i
-    plotfile = cubename+'_%i.pdf' % i
+    plotfile = plotpath+cubename+'_%i.pdf' % i
     pl.savefig(plotfile)
 
     objectfits.close()
     mom0.close()
     return
 
-def make_object_plots(sourcetablename,overwrite=False):
-    delimiter = None
-    if sourcetablename[-3:] == 'csv':
-        delimiter = ','
+def make_object_plots(sourcetablename,allsources=False,overwrite=False):
+    plotpath = 'plots/HI/'
     sources = Table.read(sourcetablename)
-    #sources = np.loadtxt(sourcetablename,usecols=range(35),delimiter=delimiter)
+    if not allsources:
+        sources = sources[sources['y/n/m'] == 'y']
+        plotpath = 'plots/candidates/HI/'
     ras = (sources['id'] // 10**4).astype(int)
     decs = sources['id'] % 10**4 // 1 / 100
     ids = (sources['id'] * 10**3 % 10**3).astype(int)
-    #ras = (sources[:,0] // 10**4).astype(int)
-    #decs = sources[:,0] % 10**4 // 1 / 100
-    #ids = (sources[:,0] * 10**3 % 10**3).astype(int)
     print('overwrite =',overwrite)
     for j in range(ids.size):
-        make_object_plot(ras[j],decs[j],ids[j],overwrite=overwrite)
+        make_object_plot(ras[j],decs[j],ids[j],plotpath,overwrite=overwrite)
     return
 
 
