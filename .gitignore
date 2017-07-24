@@ -2,6 +2,7 @@
 *.pyc
 *~
 DR2W/
+plots/objects/
 Misc/
 NGC2903*
 LeoT_*png
