@@ -44,7 +44,7 @@ def umask_cubes():
             print(cubename,'already done!')
             continue
         print(cubename,'starting...')
-        cube = fits.open('DR2W/GALFA_HI_RA+DEC_'+cubename+'.fits')
+        cube = fits.open('DR2W/original/GALFA_HI_RA+DEC_'+cubename+'.fits')
         for i in range(cube[0].data.shape[0]):                 
             cube[0].data[i] = umask(cube[0].data[i],30)
         cube.writeto('DR2W/processed/GALFA_HI_RA+DEC_'+cubename+'_UnsharpMask_r=30.fits')
