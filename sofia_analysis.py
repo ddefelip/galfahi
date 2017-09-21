@@ -10,6 +10,7 @@ from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.table import Table
 
+import matplotlib.gridspec as gridspec
 
 cubes = ['004.00+02.35_W','004.00+10.35_W','004.00+18.35_W','004.00+26.35_W','004.00+34.35_W',
 	 '012.00+02.35_W','012.00+10.35_W','012.00+18.35_W','012.00+26.35_W','012.00+34.35_W',
@@ -74,6 +75,52 @@ plotunits = ['','',' [pixels]',' [pixels]',' [pixels]',' [pixels]',' [pixels]','
              '',' [channels]',' [pixels]',' [pixels]',' [pixels]',' [deg]',
              ' [pixels]',' [pixels]',' [deg]',' [K]',' [K]',' [K]',' [deg]',
              ' [K]','',' [km/s]',' [km/s]',' [km/s]',' [deg]',' [deg]',' [km/s]']
+
+def make_report_plot(ra,dec,i,plotpath,overwrite=False):
+
+    mpl.rcParams.update({'font.size':13})
+
+    cubename = 'GALFA_HI_RA+DEC_'+str(ra).zfill(3)+'.00+'+str(dec).zfill(5)+'_W_UnsharpMask_r=30'
+    path = 'DR2W/'+str(ra).zfill(3)+'.00+'+str(dec).zfill(5)+'_W/UnsharpMask_r=30/R/objects/'
+
+    plotpath, dirs, files = os.walk(plotpath).next()
+    if cubename+'_%i.pdf' % i in files and not overwrite:
+        return
+        
+    objectfits = fits.open(path+cubename+'_%i.fits' % i)
+    mom0 = fits.open(path+cubename+'_%i_mom0.fits' % i)
+    index, velocity, spectrum = np.loadtxt(path+cubename+'_%i_spec.txt' % i,unpack=True)
+    sourcetable = np.loadtxt(path[:-8]+cubename+'_cat.ascii',usecols=range(35))
+
+    wcs = WCS(objectfits[0].header).celestial
+
+    pl.clf()
+    f = pl.figure(figsize=(5,6.1))
+    gs = gridspec.GridSpec(2,1,height_ratios=[4,1])
+    ax4 = pl.subplot(gs[0],projection=wcs)
+    ax1 = pl.subplot(gs[1])
+
+    ax1.plot(velocity/1000,spectrum)
+    ax1.set_xlabel('Velocity [km/s]')
+    if np.min(spectrum) >= 0:
+        ax1.set_ylim(ymin=-0.1*np.max(spectrum))
+
+    objectfitsdata = objectfits[0].data
+    objectfitsdata[objectfitsdata < 0] = 0
+    im4 = ax4.imshow(np.sum(objectfitsdata,axis=0),origin='lower',cmap=mpl.cm.gray,interpolation='nearest')
+    ax4.coords[0].set_ticks(number=3,exclude_overlapping=True)
+    ax4.coords[1].set_ticks(number=3,exclude_overlapping=True)
+
+    f.colorbar(im4,ax=ax4,pad=0.05)
+    ax4.set_title(str(ra*10**4 + dec*10**2 + i*10**(-3)))
+    plotfile = '/home/cal/defelippis/Desktop/reportplots/'+cubename+'_%i.pdf' % i
+    pl.savefig(plotfile)
+
+    objectfits.close()
+    mom0.close()
+ 
+    return
+
 
 
 def set_galactic_peak(ra, dec):
@@ -168,7 +215,9 @@ def make_object_plots(sourcetablename,allsources=False,overwrite=False):
     ids = (sources['id'] * 10**3 % 10**3).astype(int)
     print('overwrite =',overwrite)
     for j in range(ids.size):
-        make_object_plot(ras[j],decs[j],ids[j],plotpath,overwrite=overwrite)
+       # make_object_plot(ras[j],decs[j],ids[j],plotpath,overwrite=overwrite)
+        make_report_plot(ras[j],decs[j],ids[j],plotpath,overwrite=overwrite)
+
     return
 
 
