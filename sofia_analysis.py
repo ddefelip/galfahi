@@ -208,7 +208,7 @@ def make_object_plots(sourcetablename,allsources=False,overwrite=False):
     plotpath = 'plots/HI/'
     sources = Table.read(sourcetablename)
     if not allsources:
-        sources = sources[sources['y/n/m'] == 'y']
+        sources = sources[sources['yng'] == 'y']
         plotpath = 'plots/candidates/HI/'
     ras = (sources['id'] // 10**4).astype(int)
     decs = sources['id'] % 10**4 // 1 / 100
@@ -244,8 +244,8 @@ def find_good_objects(ra, dec, overwrite=False, makeobjectplots=False):
 #    nchan = (sourcetable[:,15] < 70) # set max number of channels
     w50 = (channels_to_velwidth(sourcetable[:,30]) < 50) # set max w50 = 50 km/s
     ellmaj = (sourcetable[:,20] < 10) # set max size in spatial dimension (fitted ellipse)
-    axisrat = (sourcetable[:,20]/sourcetable[:,21] < 3) # set maximum ellipticity
-    snr = (sourcetable[:,28] > 6) # set minimum integrated SNR 
+    axisrat = (sourcetable[:,17]/sourcetable[:,18] < 1.5) # set maximum ellipticity
+    snr = (sourcetable[:,28] > 20) # set minimum integrated SNR 
 
     #snr_sorted = np.argsort(sourcetable[:,28])
     #sorted_ids = sourcetable[:,0][snr_sorted[::-1]].astype(int)
@@ -783,7 +783,7 @@ def select_objects(criteria=[]):
         headerlist.append(params[i]+sourceunits[i])
 
     tab = Table(sources,names=headerlist)
-    tab.write('LeoT_like_sources_'+str(len(cubes))+'cubes.csv',format='csv')
+    tab.write('LeoT_like_sources_'+str(len(cubes))+'cubes_new.csv',format='csv')
 
     #np.savetxt('LeoT_like_sources_'+str(len(cubes))+'cubes.csv',sources,delimiter=',',header=','.join(headerlist))
     return
