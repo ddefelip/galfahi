@@ -215,8 +215,8 @@ def make_object_plots(sourcetablename,allsources=False,overwrite=False):
     ids = (sources['id'] * 10**3 % 10**3).astype(int)
     print('overwrite =',overwrite)
     for j in range(ids.size):
-       # make_object_plot(ras[j],decs[j],ids[j],plotpath,overwrite=overwrite)
-        make_report_plot(ras[j],decs[j],ids[j],plotpath,overwrite=overwrite)
+        make_object_plot(ras[j],decs[j],ids[j],plotpath,overwrite=overwrite)
+        #make_report_plot(ras[j],decs[j],ids[j],plotpath,overwrite=overwrite)
 
     return
 
